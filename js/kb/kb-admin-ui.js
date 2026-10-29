@@ -1,11 +1,13 @@
-// js/kb/kb-admin-ui.js
+/**
+ * js/kb/kb-admin-ui.js
+ * Admin Knowledge Workspace Controller (Firestore + Simulator)
+ */
 import { 
   db, 
   collection, 
   doc, 
   setDoc, 
   updateDoc, 
-  deleteDoc, 
   onSnapshot, 
   serverTimestamp 
 } from './firebase-config.js';
@@ -42,7 +44,6 @@ const formExamples = document.getElementById('form-examples');
 const formAnswerLo = document.getElementById('form-answer-lo');
 const formSource = document.getElementById('form-source');
 
-// 1. Initialize Real-time Listener from Firestore
 function initRealtimeSync() {
   const colRef = collection(db, 'faqs');
   onSnapshot(colRef, (snapshot) => {
@@ -50,27 +51,33 @@ function initRealtimeSync() {
     snapshot.forEach(docSnap => {
       allFaqs.push({ id: docSnap.id, ...docSnap.data() });
     });
+    
+    // Cache published records for safety
+    const published = allFaqs.filter(f => f.approval_status === 'published');
+    window.KBStorage?.saveLocalCache(published);
+
     updateMetrics();
     renderFaqList();
   }, (err) => {
-    console.error("Firestore Listen Error:", err);
-    faqListEl.innerHTML = `<div class="p-4 text-xs text-rose-600 bg-rose-50 rounded-xl">⚠️ ບໍ່ສາມາດເຊື່ອມຕໍ່ Firebase: ${err.message}</div>`;
+    console.error("Firestore Error:", err);
+    if (faqListEl) {
+      faqListEl.innerHTML = `<div style="padding: 16px; color: #be123c; background: #fff1f2; border-radius: 12px; font-size: 13px;">⚠️ ບໍ່ສາມາດເຊື່ອມຕໍ່ Firebase: ${err.message}</div>`;
+    }
   });
 }
 
-// 2. Metrics Calculation
 function updateMetrics() {
-  metricTotal.innerText = allFaqs.length;
-  metricPublished.innerText = allFaqs.filter(f => f.approval_status === 'published').length;
-  metricPending.innerText = allFaqs.filter(f => f.approval_status === 'pending_review').length;
-  metricHighRisk.innerText = allFaqs.filter(f => f.risk_level === 'high').length;
+  if (metricTotal) metricTotal.innerText = allFaqs.length;
+  if (metricPublished) metricPublished.innerText = allFaqs.filter(f => f.approval_status === 'published').length;
+  if (metricPending) metricPending.innerText = allFaqs.filter(f => f.approval_status === 'pending_review').length;
+  if (metricHighRisk) metricHighRisk.innerText = allFaqs.filter(f => f.risk_level === 'high').length;
 }
 
-// 3. Render FAQ Cards
 function renderFaqList() {
-  const query = (searchInput.value || '').toLowerCase().trim();
-  const cat = filterCategory.value;
-  const stat = filterStatus.value;
+  if (!faqListEl) return;
+  const query = (searchInput?.value || '').toLowerCase().trim();
+  const cat = filterCategory?.value || 'all';
+  const stat = filterStatus?.value || 'all';
 
   const filtered = allFaqs.filter(f => {
     if (cat !== 'all' && f.category !== cat) return false;
@@ -84,29 +91,20 @@ function renderFaqList() {
     return true;
   });
 
-  countDisplay.innerText = `${filtered.length} ລາຍການ`;
+  if (countDisplay) countDisplay.innerText = `${filtered.length} ລາຍການ`;
 
   if (filtered.length === 0) {
-    faqListEl.innerHTML = `<div class="text-center py-12 text-slate-400 text-xs">ບໍ່ພົບ FAQ ທີ່ກົງກັບເງື່ອນໄຂ</div>`;
+    faqListEl.innerHTML = `<div style="text-align: center; padding: 40px; color: #94a3b8; font-size: 13px;">ບໍ່ພົບ FAQ ທີ່ກົງກັບເງື່ອນໄຂ</div>`;
     return;
   }
 
   faqListEl.innerHTML = filtered.map(faq => {
     const isSelected = currentEditingId === faq.id;
     const borderClass = isSelected ? 'border-2 border-rose-500 bg-rose-50/20' : 'border border-slate-200 bg-white hover:border-rose-300';
-    
-    // Risk Badge Color Token
-    let riskBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">LOW RISK</span>`;
-    if (faq.risk_level === 'medium') riskBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-50 text-amber-800 border border-amber-200">MEDIUM RISK</span>`;
-    if (faq.risk_level === 'high') riskBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-50 text-rose-700 border border-rose-200">HIGH RISK</span>`;
 
-    // Status Badge
-    let statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold font-code bg-slate-100 text-slate-600">${faq.approval_status}</span>`;
-    if (faq.approval_status === 'published') {
-      statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold font-code bg-emerald-50 text-emerald-700 border border-emerald-200">PUBLISHED</span>`;
-    } else if (faq.approval_status === 'pending_review') {
-      statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold font-code bg-amber-50 text-amber-700 border border-amber-200">PENDING</span>`;
-    }
+    let riskBadge = `<span class="badge-risk low">LOW RISK</span>`;
+    if (faq.risk_level === 'medium') riskBadge = `<span class="badge-risk medium">MEDIUM RISK</span>`;
+    if (faq.risk_level === 'high') riskBadge = `<span class="badge-risk high">HIGH RISK</span>`;
 
     return `
       <div class="relative clean-card rounded-2xl p-4 transition-all cursor-pointer ${borderClass}" onclick="window.selectFaq('${faq.id}')">
@@ -117,7 +115,7 @@ function renderFaqList() {
               <span class="text-[11px] text-slate-600 font-medium">${faq.category || ''}</span>
             </div>
             <div class="flex items-center gap-2">
-              ${statusBadge}
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold font-code bg-slate-100 text-slate-600 uppercase">${faq.approval_status}</span>
               ${riskBadge}
             </div>
           </div>
@@ -135,70 +133,66 @@ function renderFaqList() {
   }).join('');
 }
 
-// 4. Select FAQ to Populate Form & Simulator
 window.selectFaq = function(id) {
   const faq = allFaqs.find(f => f.id === id);
   if (!faq) return;
 
   currentEditingId = id;
-  formDocId.value = faq.id;
-  formIntent.value = faq.intent_id || '';
-  formCategory.value = faq.category || 'Account Services';
-  formRisk.value = faq.risk_level || 'low';
-  formCanonicalLo.value = faq.canonical_question?.lo || '';
-  formCanonicalEn.value = faq.canonical_question?.en || '';
-  formExamples.value = (faq.example_questions || []).map(e => e.text).join(', ');
-  formAnswerLo.value = faq.answer_lo || '';
-  formSource.value = faq.source_reference || '';
+  if (formDocId) formDocId.value = faq.id;
+  if (formIntent) formIntent.value = faq.intent_id || '';
+  if (formCategory) formCategory.value = faq.category || 'Account Services';
+  if (formRisk) formRisk.value = faq.risk_level || 'low';
+  if (formCanonicalLo) formCanonicalLo.value = faq.canonical_question?.lo || '';
+  if (formCanonicalEn) formCanonicalEn.value = faq.canonical_question?.en || '';
+  if (formExamples) formExamples.value = (faq.example_questions || []).map(e => e.text).join(', ');
+  if (formAnswerLo) formAnswerLo.value = faq.answer_lo || '';
+  if (formSource) formSource.value = faq.source_reference || '';
 
-  document.getElementById('editor-tag-id').innerText = faq.intent_id || faq.id;
-  document.getElementById('editor-tag-status').innerText = faq.approval_status?.toUpperCase();
-  document.getElementById('editor-heading').innerText = `ແກ້ໄຂ FAQ: ${faq.intent_id}`;
+  const tagId = document.getElementById('editor-tag-id');
+  const tagStatus = document.getElementById('editor-tag-status');
+  const heading = document.getElementById('editor-heading');
 
-  // Update Side Panel Simulator Live View
-  simIntent.innerText = `Intent: ${faq.intent_id}`;
-  simAnswer.innerText = faq.answer_lo;
-  simSop.innerText = `SOP: ${faq.source_reference || 'Standard SOP'}`;
-  simRiskBadge.className = `px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-    faq.risk_level === 'high' ? 'bg-rose-50 text-rose-700 border border-rose-200' :
-    faq.risk_level === 'medium' ? 'bg-amber-50 text-amber-800 border border-amber-200' :
-    'bg-emerald-50 text-emerald-700 border border-emerald-200'
-  }`;
-  simRiskBadge.innerText = `${(faq.risk_level || 'low').toUpperCase()} RISK`;
+  if (tagId) tagId.innerText = faq.intent_id || faq.id;
+  if (tagStatus) tagStatus.innerText = faq.approval_status?.toUpperCase();
+  if (heading) heading.innerText = `ແກ້ໄຂ FAQ: ${faq.intent_id}`;
+
+  if (simIntent) simIntent.innerText = `Intent: ${faq.intent_id}`;
+  if (simAnswer) simAnswer.innerText = faq.answer_lo;
+  if (simSop) simSop.innerText = `SOP: ${faq.source_reference || 'Standard SOP'}`;
+  if (simRiskBadge) {
+    simRiskBadge.className = `badge-risk ${faq.risk_level || 'low'}`;
+    simRiskBadge.innerText = `${(faq.risk_level || 'low').toUpperCase()} RISK`;
+  }
 
   renderFaqList();
 };
 
-// 5. New FAQ Button
-document.getElementById('btn-new-faq').onclick = () => {
+document.getElementById('btn-new-faq')?.addEventListener('click', () => {
   currentEditingId = null;
-  editorForm.reset();
-  formDocId.value = '';
+  editorForm?.reset();
+  if (formDocId) formDocId.value = '';
   document.getElementById('editor-tag-id').innerText = 'FAQ-NEW';
   document.getElementById('editor-tag-status').innerText = 'DRAFT MODE';
   document.getElementById('editor-heading').innerText = 'ສ້າງ FAQ ໃໝ່';
   
-  simIntent.innerText = 'Intent: -';
-  simAnswer.innerText = 'ກະລຸນາພິມຄຳຕອບເພື່ອສະແດງຕົວຢ່າງ...';
-  simSop.innerText = 'SOP: -';
+  if (simIntent) simIntent.innerText = 'Intent: -';
+  if (simAnswer) simAnswer.innerText = 'ກະລຸນາພິມຄຳຕອບເພື່ອສະແດງຕົວຢ່າງ...';
+  if (simSop) simSop.innerText = 'SOP: -';
   renderFaqList();
-};
+});
 
-// 6. Save Draft
-editorForm.onsubmit = async (e) => {
+editorForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
   await saveFaqData('draft');
-};
+});
 
-// 7. Submit for Review
-document.getElementById('btn-submit-review').onclick = async () => {
+document.getElementById('btn-submit-review')?.addEventListener('click', async () => {
   await saveFaqData('pending_review');
-};
+});
 
-// 8. Publish Direct
-document.getElementById('btn-publish-direct').onclick = async () => {
+document.getElementById('btn-publish-direct')?.addEventListener('click', async () => {
   await saveFaqData('published');
-};
+});
 
 async function saveFaqData(targetStatus) {
   const id = formDocId.value;
@@ -234,7 +228,7 @@ async function saveFaqData(targetStatus) {
   }
 }
 
-// 9. Seed Sample Bank Data
+// Seed Sample Data Button
 document.getElementById('btn-seed')?.addEventListener('click', async () => {
   if (!confirm('ຕ້ອງການໂຫຼດຂໍ້ມູນ FAQ ທະນາຄານຕົວຢ່າງ (Statement, Fraud, Hours) ເຂົ້າ Firebase ບໍ່?')) return;
 
@@ -305,10 +299,8 @@ document.getElementById('btn-seed')?.addEventListener('click', async () => {
   }
 });
 
-// Event Listeners for Filters
-searchInput.oninput = renderFaqList;
-filterCategory.onchange = renderFaqList;
-filterStatus.onchange = renderFaqList;
+searchInput?.addEventListener('input', renderFaqList);
+filterCategory?.addEventListener('change', renderFaqList);
+filterStatus?.addEventListener('change', renderFaqList);
 
-// Start Firestore Sync
 initRealtimeSync();
