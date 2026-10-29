@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Marple Banking AI Assistant",
+  "version": "1.0.0",
+  "description": "ຜູ້ຊ່ວຍຕອບແຊັດອັດສະລິຍະສຳລັບທະນາຄານ (Marple Theme)",
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://firestore.googleapis.com/*",
+    "<all_urls>"
+  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "action": {
+    "default_title": "ເປີດ Marple Assistant"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"]
+    }
+  ]
+}
