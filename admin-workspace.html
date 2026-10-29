@@ -1,7 +1,308 @@
-<!-- ປ່ຽນແທນສ່ວນ <div class="user-status"> ໃນ admin-workspace.html -->
-<div class="user-status">
-  <button class="btn btn-secondary" id="btn-seed-data" style="background: #ecfdf5; color: #047857; border: 1px solid #10b981;">
-    🌱 ໂຫຼດຂໍ້ມູນທະນາຄານຕົວຢ່າງ (Seed Data)
-  </button>
-  <button class="btn btn-primary" id="btn-open-create">+ ເພີ່ມ FAQ ໃໝ່</button>
-</div>
+<!DOCTYPE html>
+<html lang="lo" class="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ລະບົບຜູ້ຊ່ວຍຕອບແຊັດອັດສະລິຍະ - Admin Knowledge Workspace</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Lao:wght@300;400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#ffffff",
+            "surface-dim": "#f8fafc",
+            "brand-ruby": "#CA2851",
+            "brand-coral": "#FF6766",
+            "brand-amber": "#d97706",
+            "brand-cyan": "#0284c7"
+          },
+          fontFamily: {
+            sans: ["Noto Sans Lao", "Noto Sans", "sans-serif"],
+            code: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/kb-workspace.css">
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 antialiased relative min-h-screen">
+
+  <!-- Ambient Light Effect -->
+  <div class="fixed top-[-100px] left-[-80px] w-[580px] h-[580px] rounded-full scorpio-orb blur-[110px] pointer-events-none -z-10 animate-pulse-glow"></div>
+  <div class="fixed top-[20%] right-[-120px] w-[620px] h-[620px] rounded-full scorpio-orb blur-[130px] pointer-events-none -z-10"></div>
+
+  <!-- FIXED HEADER -->
+  <header class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 pt-3 pointer-events-none">
+    <div class="max-w-[1720px] mx-auto pointer-events-auto bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-sm px-5 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5 flex-shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-50 to-pink-50 border border-rose-200 flex items-center justify-center text-rose-600 shadow-sm">
+          <span class="material-symbols-outlined text-[24px]">account_balance</span>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-[15px] text-slate-900 leading-none">ລະບົບຜູ້ຊ່ວຍຕອບແຊັດອັດສະລິຍະ</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 border border-rose-200 text-rose-700">v4.2 AI</span>
+          </div>
+          <span class="text-[11px] text-slate-500 mt-1">Marple Banking AI Assistant • Enterprise Hub</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sky-50 border border-sky-200 text-xs font-code">
+          <span class="w-2 h-2 rounded-full bg-sky-600 animate-pulse"></span>
+          <span class="text-sky-800 font-semibold">FIREBASE SYNC: CONNECTED</span>
+        </div>
+        
+        <button id="btn-seed" class="px-3 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+          <span class="material-symbols-outlined text-[16px]">database</span> ໂຫຼດ FAQ ຕົວຢ່າງ (Seed Data)
+        </button>
+
+        <a href="index.html" class="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+          ກັບສູ່ Portal
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="w-full px-4 sm:px-6 lg:px-8 pb-12 flex flex-col gap-6 max-w-[1720px] mx-auto pt-24">
+    
+    <!-- Top Action Bar -->
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pt-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-2.5 py-0.5 rounded-md font-code text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">policy</span> KNOWLEDGE BASE REGISTRY
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+          ຄັງຄວາມຮູ້ ແລະ ຄຳຕອບມາດຕະຖານ <span class="marple-gradient-text text-xl font-bold">(Admin Knowledge Workspace)</span>
+        </h1>
+        <p class="text-sm text-slate-600 mt-1">ຈັດການ FAQ ພາສາລາວ-ອັງກິດ, ອະນຸມັດ ແລະ ຊິ້ງຂໍ້ມູນໄປຫາ Chrome Extension ແບບ Real-time</p>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button id="btn-new-faq" class="px-4 py-2.5 rounded-xl marple-gradient-btn text-white text-xs font-bold transition shadow-md flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">add_circle</span> + ສ້າງ FAQ ໃໝ່ (Create FAQ)
+        </button>
+      </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="clean-card p-4 rounded-2xl flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-code text-[11px] text-slate-500 uppercase font-semibold">ຄັງຄຳຕອບທັງໝົດ / Total</span>
+          <span class="material-symbols-outlined text-rose-600">library_books</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-extrabold text-slate-900 font-code" id="metric-total">0</span>
+          <span class="text-xs text-slate-500">ລາຍການ</span>
+        </div>
+      </div>
+
+      <div class="clean-card p-4 rounded-2xl flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-code text-[11px] text-slate-500 uppercase font-semibold">ເຜີຍແຜ່ແລ້ວ / Published</span>
+          <span class="material-symbols-outlined text-emerald-600">verified</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-extrabold text-emerald-600 font-code" id="metric-published">0</span>
+          <span class="text-xs text-emerald-600">ພ້ອມໃຊ້ງານໃນ Extension</span>
+        </div>
+      </div>
+
+      <div class="clean-card p-4 rounded-2xl flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-code text-[11px] text-slate-500 uppercase font-semibold">ລໍຖ້າກວດສອບ / Pending</span>
+          <span class="material-symbols-outlined text-amber-600">pending_actions</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-extrabold text-amber-600 font-code" id="metric-pending">0</span>
+          <span class="text-xs text-amber-700">ຕ້ອງກວດສອບ</span>
+        </div>
+      </div>
+
+      <div class="clean-card p-4 rounded-2xl flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-code text-[11px] text-slate-500 uppercase font-semibold">ຄວາມສ່ຽງສູງ / High Risk</span>
+          <span class="material-symbols-outlined text-rose-600">shield_lock</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-extrabold text-rose-600 font-code" id="metric-high-risk">0</span>
+          <span class="text-xs text-rose-700">ຄວບຄຸມເຂັ້ມງວດ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="clean-card rounded-2xl p-3 flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3">
+      <div class="flex flex-col md:flex-row items-center gap-3 flex-1">
+        <div class="relative flex-1 w-full">
+          <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+          <input id="search-input" class="w-full bg-slate-50 pl-10 pr-4 py-2 rounded-xl text-xs text-slate-900 border border-slate-200 focus:outline-none focus:border-rose-500" placeholder="ຄົ້ນຫາຕາມຄຳຖາມ, Tag, Keyword..." type="text">
+        </div>
+        <select id="filter-category" class="bg-white border border-slate-200 px-3 py-2 rounded-xl text-xs text-slate-800">
+          <option value="all">ທຸກໝວດໝູ່ (All Categories)</option>
+          <option value="Account Services">Account Services</option>
+          <option value="Security & Fraud">Security & Fraud</option>
+          <option value="Mobile Banking">Mobile Banking</option>
+          <option value="General Information">General Information</option>
+        </select>
+        <select id="filter-status" class="bg-white border border-slate-200 px-3 py-2 rounded-xl text-xs text-slate-800">
+          <option value="all">ທຸກສະຖານະ (All Status)</option>
+          <option value="published">Published (ເຜີຍແຜ່ແລ້ວ)</option>
+          <option value="pending_review">Pending Review (ລໍຖ້າກວດ)</option>
+          <option value="draft">Draft (ຮ່າງ)</option>
+          <option value="archived">Archived (ຈັດເກັບ)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN WORKSPACE -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- LEFT LIST (FAQ Cards) -->
+      <div class="lg:col-span-6 xl:col-span-7 flex flex-col gap-4 clean-card rounded-2xl p-5 border border-slate-200">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="material-symbols-outlined text-rose-600">view_agenda</span> ລາຍການຄຳຕອບມາດຕະຖານ
+          </h3>
+          <span class="text-xs font-code text-slate-500" id="count-display">0 ລາຍການ</span>
+        </div>
+
+        <!-- FAQ Cards Container -->
+        <div id="faq-list" class="flex flex-col gap-3.5 w-full">
+          <div class="text-center py-10 text-slate-400 text-xs">ກຳລັງໂຫຼດຂໍ້ມູນຈາກ Firebase...</div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL (Editor & Side Panel Simulator) -->
+      <div class="lg:col-span-6 xl:col-span-5 flex flex-col gap-4">
+        
+        <!-- Active Editor Form -->
+        <div class="clean-card-elevated rounded-2xl p-5 flex flex-col gap-4 border border-rose-200 relative">
+          <div class="flex items-start justify-between pb-3 border-b border-slate-200">
+            <div>
+              <div class="flex items-center gap-2">
+                <span id="editor-tag-id" class="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 font-code text-xs font-bold border border-rose-200">FAQ-NEW</span>
+                <span id="editor-tag-status" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-code text-[11px] font-semibold">Draft Mode</span>
+              </div>
+              <h2 id="editor-heading" class="text-base font-bold text-slate-900 mt-1">ສ້າງ ຫຼື ແກ້ໄຂ FAQ</h2>
+            </div>
+          </div>
+
+          <form id="editor-form" class="flex flex-col gap-3">
+            <input type="hidden" id="form-doc-id">
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-bold text-slate-700">ລະຫັດເຈດຕະນາ (Intent ID) *</label>
+                <input id="form-intent" required class="w-full bg-slate-50 px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200 mt-1" placeholder="ACC_STMT_001">
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-700">ໝວດໝູ່ (Category) *</label>
+                <select id="form-category" class="w-full bg-slate-50 px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200 mt-1">
+                  <option value="Account Services">Account Services</option>
+                  <option value="Security & Fraud">Security & Fraud</option>
+                  <option value="Mobile Banking">Mobile Banking</option>
+                  <option value="General Information">General Information</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-bold text-slate-700">ຄຳຖາມຫຼັກ (Canonical Question - Lao) *</label>
+              <input id="form-canonical-lo" required class="w-full bg-slate-50 px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200 mt-1" placeholder="ຄຳຖາມມາດຕະຖານພາສາລາວ">
+            </div>
+
+            <div>
+              <label class="text-xs font-bold text-slate-700">ຄຳຖາມຫຼັກ (English Canonical)</label>
+              <input id="form-canonical-en" class="w-full bg-slate-50 px-3 py-2 rounded-xl text-xs border border-slate-200 mt-1" placeholder="English Question version">
+            </div>
+
+            <div>
+              <label class="text-xs font-bold text-slate-700">ຕົວຢ່າງຄຳຖາມ (Example Phrasings - ແຍກດ້ວຍຈຸດ ,)</label>
+              <textarea id="form-examples" rows="2" class="w-full bg-slate-50 p-2.5 rounded-xl text-xs border border-slate-200 mt-1" placeholder="ຂໍສະເຕດເມັນ, ຢາກໄດ້ໃບເຄື່ອນໄຫວ, statement ຍ້ອນຫຼັງ"></textarea>
+            </div>
+
+            <div>
+              <label class="text-xs font-bold text-rose-700">ຄຳຕອບມາດຕະຖານ (Approved Answer - Lao) *</label>
+              <textarea id="form-answer-lo" required rows="3" class="w-full bg-slate-50 p-2.5 rounded-xl text-xs border border-slate-200 mt-1 leading-relaxed" placeholder="ຄຳຕອບທີ່ໄດ້ຮັບການອະນຸມັດ..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-bold text-slate-700">ລະດັບຄວາມສ່ຽງ (Risk Level)</label>
+                <select id="form-risk" class="w-full bg-slate-50 px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200 mt-1">
+                  <option value="low">🟢 Low Risk (ຕ່ຳ)</option>
+                  <option value="medium">🟡 Medium Risk (ປານກາງ)</option>
+                  <option value="high">🔴 High Risk (ສູງ/ຄວບຄຸມ)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs font-bold text-slate-700">ເອກະສານ SOP ອ້າງອີງ</label>
+                <input id="form-source" class="w-full bg-slate-50 px-3 py-2 rounded-xl text-xs border border-slate-200 mt-1" placeholder="Retail SOP Sec 4.2">
+              </div>
+            </div>
+
+            <!-- Action Buttons Lifecycle -->
+            <div class="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
+              <button type="submit" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 shadow-xs">
+                ບັນທຶກສະບັບຮ່າງ (Save Draft)
+              </button>
+              
+              <div class="flex items-center gap-2">
+                <button type="button" id="btn-submit-review" class="px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold border border-amber-300">
+                  ສົ່ງກວດສອບ
+                </button>
+                <button type="button" id="btn-publish-direct" class="px-4 py-2 rounded-xl marple-gradient-btn text-white text-xs font-bold shadow-md flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">publish</span> ເຜີຍແຜ່ (Publish)
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- SIDE PANEL SIMULATOR (Preview) -->
+        <div class="clean-card rounded-2xl p-4 border border-sky-200 bg-sky-50/40 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-rose-600 text-[18px]">extension</span> ຈຳລອງຜົນໃນ Chrome Extension (Side Panel)
+            </span>
+            <span class="font-code text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-bold">Live Agent View</span>
+          </div>
+
+          <div class="bg-white rounded-xl p-3 border border-slate-200 shadow-xs flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="font-code text-[11px] text-slate-600 font-semibold" id="sim-intent">Intent: -</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase" id="sim-risk-badge">LOW RISK</span>
+            </div>
+            <div class="text-xs text-slate-800 bg-slate-50 p-2.5 rounded-lg border border-slate-200 leading-relaxed font-medium" id="sim-answer">
+              ເລືອກ ຫຼື ພິມ FAQ ເພື່ອເບິ່ງຕົວຢ່າງການສະແດງຜົນໃນ Sidebar ຂອງພະນັກງານ...
+            </div>
+            <div class="flex items-center justify-between pt-1 text-[11px] text-slate-500">
+              <span id="sim-sop">SOP: -</span>
+              <button class="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-600 text-white flex items-center gap-1 pointer-events-none opacity-80">
+                <span class="material-symbols-outlined text-[13px]">send</span> Insert Draft
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="js/kb/kb-admin-ui.js"></script>
+</body>
+</html>
