@@ -1,0 +1,59 @@
+/* css/kb-workspace.css */
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
+  }
+}
+
+/* Scrollbar Minimal */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* Custom Aura & Ambient Glow */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(1.05); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 6s ease-in-out infinite;
+}
+
+.scorpio-orb {
+  background: radial-gradient(circle, rgba(202,40,81,0.08) 0%, rgba(255,103,102,0.05) 40%, rgba(2,132,199,0.04) 70%, transparent 100%);
+}
+
+.clean-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05);
+}
+
+.clean-card-elevated {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+}
+
+.marple-gradient-btn {
+  background: linear-gradient(135deg, #CA2851 0%, #FF6766 50%, #FF8A65 100%);
+  box-shadow: 0 4px 14px -1px rgba(202, 40, 81, 0.35);
+  border: none;
+  cursor: pointer;
+}
+
+.marple-gradient-btn:hover {
+  background: linear-gradient(135deg, #b81745 0%, #fa5554 50%, #f9734c 100%);
+  box-shadow: 0 6px 18px 0px rgba(202, 40, 81, 0.45);
+}
+
+.marple-gradient-text {
+  background: linear-gradient(135deg, #ca2851 0%, #ea580c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
