@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Noto+Sans+Lao:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="panel-container">
+    <!-- Header -->
+    <div class="panel-header">
+      <div class="brand">
+        <div class="brand-badge">MARPLE AI</div>
+        <h4>Reply Assistant</h4>
+      </div>
+      <button id="btn-sync" title="Sync ຂໍ້ມູນ FAQ ຈາກ Firebase">🔄 Sync</button>
+    </div>
+
+    <!-- Message Input -->
+    <div class="input-card">
+      <label class="label-text">ຂໍ້ຄວາມລູກຄ້າ (Customer Query):</label>
+      <textarea id="customer-query" rows="3" placeholder="ພິມ ຫຼື ກັອບປີ້ຂໍ້ຄວາມລູກຄ້າມາວາງໃສ່ນີ້..."></textarea>
+      
+      <div class="btn-group">
+        <button id="btn-analyze" class="btn btn-primary">⚡ ວິເຄາະຫາຄຳຕອບ</button>
+      </div>
+    </div>
+
+    <!-- Status notification -->
+    <div id="status-msg" class="status-box" style="display: none;"></div>
+
+    <!-- Match Result Card -->
+    <div id="match-card" class="match-card" style="display: none;">
+      <div class="match-meta">
+        <span id="res-risk-badge" class="badge-risk low">LOW RISK</span>
+        <span id="res-confidence" class="txt-confidence font-code">Confidence: 95%</span>
+      </div>
+
+      <div class="res-intent" id="res-intent">Intent: ACC_STATEMENT</div>
+
+      <div class="answer-wrapper">
+        <div class="answer-label">ຄຳຕອບທີ່ໄດ້ຮັບການອະນຸມັດ (Lao Draft):</div>
+        <div class="answer-text" id="res-answer">...</div>
+      </div>
+
+      <!-- Main Action: Insert Draft -->
+      <button id="btn-insert-draft" class="btn btn-insert">
+        📥 Insert Draft ລົງຊ່ອງແຊັດ
+      </button>
+
+      <div id="risk-warning-box" class="risk-warning-box" style="display: none;">
+        <strong>⚠️ ຂໍ້ຄວນລະວັງ (Checklist):</strong>
+        <p id="risk-warning-text"></p>
+      </div>
+
+      <div class="sop-footer">
+        <span id="res-sop">SOP: Standard Guideline</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
